@@ -1339,6 +1339,13 @@ class thermal:
 
         return estimated_transform
 
+    def change_point_num(self):
+        try:
+            return len(next(iter(self.select_pt_point.values())))
+        except:
+            print("Error!! Points are not selected!!")
+            return 4
+
 
 
 

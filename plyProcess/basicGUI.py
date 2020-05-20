@@ -47,7 +47,6 @@ class Application(tk.Frame):
         self.method_selection = tk.IntVar(value=1)
         self.program_mode = tk.IntVar(value=1)
         self.pack()
-        self.create_widgets()
         self.is_images_loaded = False
         self.electroptic_images_loaded_100 = []
         self.df = pd.DataFrame(columns=['Volume', 'Vertex Error', 'Ortho Error'])
@@ -59,6 +58,8 @@ class Application(tk.Frame):
         self.user3D_point = np.array([[-1.16, -1.5, 0], [-0.47, 0, 1.20], [0, -1.90, 0.46], [-0.47, 0, 0.37]])
         self.variable_list_3d_pts = [[tk.DoubleVar(value=self.user3D_point[i,j]) for j in range(3)] for i in
                                      range(self.num_user_3D_point_input)]
+        self.estimated_transform_found = False
+        self.create_widgets()
 
 
 
@@ -173,11 +174,6 @@ class Application(tk.Frame):
         self.pictures_point_select["command"] = self.create_window_4_point
         self.pictures_point_select.pack()
 
-        self.plane_point = tk.Button(self)
-        self.plane_point["text"] = "Point Selecter"
-        self.plane_point["command"] = self.point_selector
-        self.plane_point.pack()
-
         self.pictures = tk.Button(self)
         self.pictures["text"] = "Pictures for \nPlane Selection"
         self.pictures["command"] = self.create_window
@@ -192,6 +188,11 @@ class Application(tk.Frame):
         self.pictures_door["text"] = "Pictures for \n Door Selection"
         self.pictures_door["command"] = self.create_window_4_door
         self.pictures_door.pack()
+
+        self.plane_point = tk.Button(self)
+        self.plane_point["text"] = "Point Selecter"
+        self.plane_point["command"] = self.point_selector
+        self.plane_point.pack()
 
         self.plane_window = tk.Button(self)
         self.plane_window["text"] = "Window Selecter"
@@ -563,6 +564,7 @@ class Application(tk.Frame):
     def point_selector(self):
         self.th.change_electrooptic_images(self.electroptic_images)
         self.th.window_selection_from_points(img_window_list=self.img_point_list, mode="point")
+        self.num_user_3D_point_input = self.th.change_point_num()
         # self.th.compute_3d_points_ground_opencv()
         cur_3D_user_input = [[self.variable_list_3d_pts[i][j].get() for j in range(3)] for i in range(self.num_user_3D_point_input)]
         cur_3D_user_input = np.array(cur_3D_user_input).T
@@ -621,6 +623,10 @@ class Application(tk.Frame):
         # tk.Label(window, text="Reflected Temperature").grid(row=2)
         # tk.Label(window, text="RANSAC Parameter").grid(row=3)
         # tk.Label(window, text="Penalty Parameter").grid(row=4)
+        if self.num_user_3D_point_input != 4:
+            self.variable_list_3d_pts = [[tk.DoubleVar(value=0.0) for j in range(3)] for i in
+                                         range(self.num_user_3D_point_input)]
+
         entry_list = []
         for i in range(self.num_user_3D_point_input):
             for j in range(3):
@@ -773,6 +779,7 @@ class Application(tk.Frame):
             try:
                 print("A valid transformation file found, No need to point selection")
                 print("Loaded scale is {}".format(self.estimated_transform["scale"]))
+                self.estimated_transform_found = True
             except:
                 print("Wrong estimated transform file!!!!")
                 del self.estimated_transform
