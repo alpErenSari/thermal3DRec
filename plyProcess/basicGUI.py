@@ -14,7 +14,6 @@ import PIL.ImageTk
 import glob, os
 import pickle
 import pandas as pd
-from tqdm import tqdm
 from plyProcess.thermalPly import thermal
 import subprocess
 from plyProcess.ransac import angle_between_planes, save_geometry_off, find_rotation_from_two_vectors, \
@@ -79,30 +78,30 @@ class Application(tk.Frame):
         # self.selection["variable"] = self.rec_selection
         self.selection_2.pack()
 
-        self.selection_colmap = tk.Radiobutton(self, variable=self.rec_method_selection, value=1)
-        self.selection_colmap["text"] = "3D Reconstruction with\n COLMAP"
-        # self.selection["variable"] = self.rec_selection
-        self.selection_colmap.pack()
+        # self.selection_colmap = tk.Radiobutton(self, variable=self.rec_method_selection, value=1)
+        # self.selection_colmap["text"] = "3D Reconstruction with\n COLMAP"
+        # # self.selection["variable"] = self.rec_selection
+        # self.selection_colmap.pack()
+        #
+        # self.selection_openmvg = tk.Radiobutton(self, variable=self.rec_method_selection, value=2)
+        # self.selection_openmvg["text"] = "3D Reconstruction with\n OpenMVG"
+        # # self.selection["variable"] = self.rec_selection
+        # self.selection_openmvg.pack()
+        #
+        # self.selection_5 = tk.Radiobutton(self, variable=self.camera_selection, value=1)
+        # self.selection_5["text"] = "3D Reconstruction with\n a normal camera"
+        # # self.selection["variable"] = self.rec_selection
+        # self.selection_5.pack()
 
-        self.selection_openmvg = tk.Radiobutton(self, variable=self.rec_method_selection, value=2)
-        self.selection_openmvg["text"] = "3D Reconstruction with\n OpenMVG"
-        # self.selection["variable"] = self.rec_selection
-        self.selection_openmvg.pack()
+        # self.selection_3 = tk.Radiobutton(self, variable=self.camera_selection, value=2)
+        # self.selection_3["text"] = "3D Reconstruction with\n Koral Xiaomi"
+        # # self.selection["variable"] = self.rec_selection
+        # self.selection_3.pack()
 
-        self.selection_5 = tk.Radiobutton(self, variable=self.camera_selection, value=1)
-        self.selection_5["text"] = "3D Reconstruction with\n Nikon D90"
-        # self.selection["variable"] = self.rec_selection
-        self.selection_5.pack()
-
-        self.selection_3 = tk.Radiobutton(self, variable=self.camera_selection, value=2)
-        self.selection_3["text"] = "3D Reconstruction with\n Koral Xiaomi"
-        # self.selection["variable"] = self.rec_selection
-        self.selection_3.pack()
-
-        self.selection_4 = tk.Radiobutton(self, variable=self.camera_selection, value=3)
-        self.selection_4["text"] = "3D Reconstruction with\n Thermal RGB Camera"
-        # self.selection["variable"] = self.rec_selection
-        self.selection_4.pack()
+        # self.selection_4 = tk.Radiobutton(self, variable=self.camera_selection, value=3)
+        # self.selection_4["text"] = "3D Reconstruction with\n FLIR E60 Thermal Camera"
+        # # self.selection["variable"] = self.rec_selection
+        # self.selection_4.pack()
 
         self.selection_mode = tk.Radiobutton(self, variable=self.program_mode, value=1)
         self.selection_mode["text"] = "Normal Mode"
@@ -653,7 +652,7 @@ class Application(tk.Frame):
                                                   self.electroptic_images]
             self.is_images_loaded = True
 
-        for i, img_ in tqdm(enumerate(self.electroptic_images_loaded_100)):
+        for i, img_ in enumerate(self.electroptic_images_loaded_100):
             bb1 = Buttons3(window.inner, img_, num=i, root=self.folder_path, list_img=self.img_list)
             bbs.append(bb1)
 
@@ -829,12 +828,14 @@ class Application(tk.Frame):
             isThermal = self.camera_selection.get()
         else:
             isThermal = 3
-        if(self.rec_method_selection.get() is 1):
+        if(self.rec_method_selection.get() == 1):
             colmapRec = colmapReconstruct(self.folder_path, self.image_path)
-            # colmapRec.reconstruct()
+            colmapRec.reconstruct()
         else:
-            mvgRec = openMVGReconstruct(self.folder_path, self.image_path, isThermal=isThermal)
-            mvgRec.reconstruct()
+            # mvgRec = openMVGReconstruct(self.folder_path, self.image_path, isThermal=isThermal)
+            # mvgRec.reconstruct()
+            colmapRec = colmapReconstruct(self.folder_path, self.image_path)
+            colmapRec.reconstruct()
         self.th = thermal(self.param)
         if(self.rec_selection.get() is 1):
             self.ply_ = self.th.only_read_ply(self.rec_method_selection.get())
