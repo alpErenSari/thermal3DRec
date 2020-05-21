@@ -24,6 +24,10 @@ Our software utilizes [COLMAP](https://colmap.github.io/) for 3D reconstruction,
 You may install these dependencies by running \
 `pip install -r requirements.txt`
 
+# Running
+Run the project using the command: \
+`python moduletest.py`
+
 # Options
 In the beginning, there are some choices about the function of the software. They are as follows:
 
