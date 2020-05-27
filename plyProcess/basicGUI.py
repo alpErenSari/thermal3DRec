@@ -564,7 +564,7 @@ class Application(tk.Frame):
         self.th.change_electrooptic_images(self.electroptic_images)
         self.th.window_selection_from_points(img_window_list=self.img_point_list, mode="point")
         self.num_user_3D_point_input = self.th.change_point_num()
-        # self.th.compute_3d_points_ground_opencv()
+        # self.th.compute_3d_points_ground()
         cur_3D_user_input = [[self.variable_list_3d_pts[i][j].get() for j in range(3)] for i in range(self.num_user_3D_point_input)]
         cur_3D_user_input = np.array(cur_3D_user_input).T
         self.estimated_transform = self.th.align_user_input(cur_3D_user_input)

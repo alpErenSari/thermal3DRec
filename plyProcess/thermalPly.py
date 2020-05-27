@@ -1297,7 +1297,12 @@ class thermal:
             A_mat_dict[key]['A_3'] = A_mat_dict[key]['A'][:,:3]
             A_mat_dict[key]['b'] = -1.0 * A_mat_dict[key]['A'][:, -1:]
             A_mat_dict[key]['sol'] = np.linalg.lstsq( A_mat_dict[key]['A_3'],  A_mat_dict[key]['b'], rcond=None)[0]
-            print(A_mat_dict[key]['sol'])
+            # print(A_mat_dict[key]['sol'])
+
+        points3D = np.concatenate([val['sol'] for val in A_mat_dict.values()], axis=1)
+        print(points3D)
+
+        return points3D
 
 
     def compute_3d_points_ground_opencv(self):
@@ -1328,7 +1333,8 @@ class thermal:
 
     def align_user_input(self, user_3D_points):
 
-        points3D_model = self.compute_3d_points_ground_opencv()
+        # points3D_model = self.compute_3d_points_ground_opencv()
+        points3D_model = self.compute_3d_points_ground()
 
         rot, trans, scale, trans_error = align(points3D_model, user_3D_points)
         print("Scale is {}".format(scale))
